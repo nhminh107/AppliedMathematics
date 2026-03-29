@@ -50,13 +50,11 @@ def isREF(A: list):
 
 def gaussian_eliminate(A: list, b: list):
     """Hàm chính: Giải hệ phương trình Ax = b"""
-    # 1. Ghép ma trận và đưa về dạng bậc thang
     augMatrix = augmented_matrix(A, b)
     ref_matrix, swap_count = get_REF(augMatrix)
     
     n, m = len(A), len(A[0])
     
-    # 2. Xác định hạng và phân loại nghiệm
     rank_a = 0
     for i in range(n):
         is_zero_row_A = True
@@ -74,15 +72,14 @@ def gaussian_eliminate(A: list, b: list):
     if rank_a < m:
         return ref_matrix, "Vô số nghiệm", swap_count
     
-    # 3. Thế ngược tìm nghiệm duy nhất
     U = [r[:m] for r in ref_matrix]
     c = [r[m] for r in ref_matrix]
-    x = [0.0]*m 
-    for i in range(m-1, -1, -1): 
-      s = sum(augMatrix[i][j]*x[j] for j in range(i+1, m))
-      x[i] = (augMatrix[i][m] - s)/augMatrix[i][i]
-  
-    return augMatrix, x, swap_count
+    x = [0.0] * m 
+    for i in range(m - 1, -1, -1): 
+        s = sum(U[i][j] * x[j] for j in range(i + 1, m))
+        x[i] = (c[i] - s) / U[i][i]
+
+    return ref_matrix, x, swap_count
 
 
 
