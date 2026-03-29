@@ -44,7 +44,7 @@ def back_substitution(U: list, c: list):
         
         # Nếu biểu thức chỉ có đúng 1*xi, nó là ẩn tự do
         if tmp[i + 1] == 1.0 and all(abs(tmp[k]) < 1e-10 for k in range(n + 1) if k != i + 1):
-            ket_qua.append(f"x_{i+1} = t (ẩn tự do)")
+            ket_qua.append(f"x_{i+1} (ẩn tự do)")
             continue
             
         terms = []
@@ -55,7 +55,7 @@ def back_substitution(U: list, c: list):
             if abs(tmp[k]) > 1e-10:
                 sign = "+" if tmp[k] > 0 else "-"
                 val = f"{abs(tmp[k]):.2f}" if abs(abs(tmp[k]) - 1.0) > 1e-10 else ""
-                terms.append(f"{sign} {val}t")
+                terms.append(f"{sign} {val}x{k}")
                 
         bieu_thuc = " ".join(terms).strip()
         if bieu_thuc.startswith("+ "): 
