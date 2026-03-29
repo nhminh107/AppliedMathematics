@@ -1,5 +1,5 @@
 import copy 
-
+import getREF
 def augmented_matrix(A: list, b: list): 
     """INPUT: Matrix A, b in Ax = b
        Output: A_augmented = (A|B)""" 
@@ -49,52 +49,44 @@ def isREF(A: list):
     return True
 
 def gaussian_eliminate(A: list, b: list):
-    augMatrix = copy.deepcopy([row + [val] for row, val in zip(A, b)])
-    n = len(A)
-    m = len(A[0])
-    swap_count = 0
-
-    for i in range(min(n, m)):
-        max_row = i
-        for k in range(i + 1, n):
-            if abs(augMatrix[k][i]) > abs(augMatrix[max_row][i]):
-                max_row = k
-        
-        if abs(augMatrix[max_row][i]) < 1e-10:
-            continue
-            
-        if max_row != i:
-            augMatrix[i], augMatrix[max_row] = augMatrix[max_row], augMatrix[i]
-            swap_count += 1
-            
-        for k in range(i + 1, n):
-            factor = augMatrix[k][i] / augMatrix[i][i]
-            for j in range(i, m + 1):
-                augMatrix[k][j] -= factor * augMatrix[i][j]
-
-    x = [0.0] * m
-    has_unique = (n >= m)
+    """Hàm chính: Giải hệ phương trình Ax = b"""
+    # 1. Ghép ma trận và đưa về dạng bậc thang
+    augMatrix = augmented_matrix(A, b)
+    ref_matrix, swap_count = get_REF(augMatrix)
     
-    if has_unique:
-        for i in range(m):
-            if abs(augMatrix[i][i]) < 1e-10:
-                has_unique = False
+    n, m = len(A), len(A[0])
+    
+    # 2. Xác định hạng và phân loại nghiệm
+    rank_a = 0
+    for i in range(n):
+        is_zero_row_A = True
+        for j in range(m):
+            if abs(ref_matrix[i][j]) > 1e-10:
+                is_zero_row_A = False
                 break
+        
+        if is_zero_row_A:
+            if abs(ref_matrix[i][m]) > 1e-10:
+                return ref_matrix, "Vô nghiệm", swap_count
+        else:
+            rank_a += 1
 
-    if has_unique:
-        for i in range(m - 1, -1, -1):
-            s = sum(augMatrix[i][j] * x[j] for j in range(i + 1, m))
-            x[i] = (augMatrix[i][m] - s) / augMatrix[i][i]
-    else:
-        x = None 
-
+    if rank_a < m:
+        return ref_matrix, "Vô số nghiệm", swap_count
+    
+    # 3. Thế ngược tìm nghiệm duy nhất
+    U = [r[:m] for r in ref_matrix]
+    c = [r[m] for r in ref_matrix]
+    x = [0.0]*m 
+    for i in range(m-1, -1, -1): 
+      s = sum(augMatrix[i][j]*x[j] for j in range(i+1, m))
+      x[i] = (augMatrix[i][m] - s)/augMatrix[i][i]
+  
     return augMatrix, x, swap_count
 
 
-#Đoạn dưới để test 
 
-A = [[1,2,3], [4,5,6], [7, 8, 9]]
-b = [1,2,3]
-plus_another_row(A, 0, 1, 1) 
-print(A)
-print(augmented_matrix(A,b)) 
+"""A_1 = [[2, 1], [1, 3]]
+b_1 = [0, 0]
+
+print(gaussian_eliminate(A_1, b_1))"""
