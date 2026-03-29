@@ -13,7 +13,7 @@ def change_row(A: list, idx1 : int, idx2: int):
     A[idx1] = A[idx2] 
     A[idx2] = temp 
 
-def multipli_row_with_c(A: list, idx1 : int, c: int): 
+def multiply_row_with_c(A: list, idx1 : int, c: int):
     """Nhân một dòng với số c""" 
     if idx1> len(A): 
         return -1
@@ -25,7 +25,7 @@ def plus_another_row(A: list, idx1: int, idx2: int, c: int):
     """Input: Ma trận A, idx1 là hàng được cộng, c là số nhân
     R_idx1 <- R_idx1 + c*R_idx2"""
     A_copy = copy.deepcopy(A) 
-    multipli_row_with_c(A_copy, idx2, c) 
+    multiply_row_with_c(A_copy, idx2, c)
 
     for i in range(len(A[idx1])):
         A[idx1][i] += A_copy[idx2][i] 
