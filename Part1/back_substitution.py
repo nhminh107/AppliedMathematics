@@ -15,13 +15,13 @@ def back_substitution(U: list, c: list):
         # Tìm phần tử (pivot) của dòng i
         p = -1
         for j in range(n):
-            if abs(U[i][j]) > 1e-9:
+            if abs(U[i][j]) > 1e-10:
                 p = j
                 break
                 
         # Xử lý trường hợp dòng toàn số 0 (không có pivot)
         if p == -1:
-            if abs(c[i]) > 1e-9:
+            if abs(c[i]) > 1e-10:
                 return "Hệ vô nghiệm"
             continue 
             
@@ -31,7 +31,7 @@ def back_substitution(U: list, c: list):
         
         # Thế biểu thức của các x_j vào
         for j in range(p + 1, n):
-            if abs(U[i][j]) > 1e-9:
+            if abs(U[i][j]) > 1e-10:
                 factor = -U[i][j] / U[i][p]
                 # Cộng dồn hệ số: x_p = x_p + factor * x_j
                 for k in range(n + 1):
@@ -43,18 +43,18 @@ def back_substitution(U: list, c: list):
         tmp = x[i]
         
         # Nếu biểu thức chỉ có đúng 1*xi, nó là ẩn tự do
-        if tmp[i + 1] == 1.0 and all(abs(tmp[k]) < 1e-9 for k in range(n + 1) if k != i + 1):
+        if tmp[i + 1] == 1.0 and all(abs(tmp[k]) < 1e-10 for k in range(n + 1) if k != i + 1):
             ket_qua.append(f"x_{i+1} = t (ẩn tự do)")
             continue
             
         terms = []
-        if abs(tmp[0]) > 1e-9: 
+        if abs(tmp[0]) > 1e-10: 
             terms.append(f"{tmp[0]:.2f}")
             
         for k in range(1, n + 1):
-            if abs(tmp[k]) > 1e-9:
+            if abs(tmp[k]) > 1e-10:
                 sign = "+" if tmp[k] > 0 else "-"
-                val = f"{abs(tmp[k]):.2f}" if abs(abs(tmp[k]) - 1.0) > 1e-9 else ""
+                val = f"{abs(tmp[k]):.2f}" if abs(abs(tmp[k]) - 1.0) > 1e-10 else ""
                 terms.append(f"{sign} {val}t")
                 
         bieu_thuc = " ".join(terms).strip()
@@ -66,11 +66,3 @@ def back_substitution(U: list, c: list):
         ket_qua.append(f"x_{i+1} = {bieu_thuc}")
         
     return ket_qua
-
-# test
-U = [[1, 2, 3], [0, 1, 2], [0, 0, 0]]
-c = [9, 4, 0]
-kq = back_substitution(U, c)
-print("Nghiệm của phương trình là:")
-for a in kq:
-    print(a)
