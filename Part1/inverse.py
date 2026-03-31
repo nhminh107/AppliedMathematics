@@ -1,5 +1,8 @@
 def inverse(A : list):
     n = len(A)
+    if any([len(A[i]) != n for i in range(n)]):
+        return "Ma tran khong vuong, khong co nghich dao!"
+    
     # Tao ma tran don vi I
     I = [[1.0 if i == j else 0.0 for j in range(n)] for i in range(n)]
 
