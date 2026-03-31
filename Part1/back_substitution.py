@@ -31,42 +31,41 @@ def back_substitution(U: list, c: list):
 
     # Lọc các ẩn tự do
     free_vars = [i for i in range(n) if abs(x[i][i + 1] - 1.0) < 1e-10 and all(abs(x[i][k]) < 1e-10 for k in range(n + 1) if k != i + 1)]
-    
-    # --- XỬ LÝ TRƯỜNG HỢP VÔ SỐ NGHIỆM (CHUẨN NHỎ NHẤT) ---
+
+    # Trường hợp vô số nghiệm 
     if free_vars:
         x0 = [row[0] for row in x]  # Nghiệm riêng ban đầu
         N = [[row[j + 1] for row in x] for j in free_vars]  # Các vector cơ sở
         k = len(free_vars)
-        
+
         # Tính ma trận vuông (N * N^T) và vector (-N * x0) để tìm trọng số t
         Nt_N = [[sum(N[i][l] * N[j][l] for l in range(n)) for j in range(k)] for i in range(k)]
         Nt_x0 = [-sum(N[i][l] * x0[l] for l in range(n)) for i in range(k)]
-        
-        # Khử Gauss cục bộ để giải hệ tìm mảng trọng số t
+
+
         for i in range(k):
             pivot = max(range(i, k), key=lambda r: abs(Nt_N[r][i]))
             Nt_N[i], Nt_N[pivot] = Nt_N[pivot], Nt_N[i]
             Nt_x0[i], Nt_x0[pivot] = Nt_x0[pivot], Nt_x0[i]
-            
+
             if abs(Nt_N[i][i]) > 1e-10:
                 for j in range(i + 1, k):
                     factor = Nt_N[j][i] / Nt_N[i][i]
                     for l in range(i, k):
                         Nt_N[j][l] -= factor * Nt_N[i][l]
                     Nt_x0[j] -= factor * Nt_x0[i]
-        
+
         t = [0.0] * k
         for i in range(k - 1, -1, -1):
             if abs(Nt_N[i][i]) > 1e-10:
                 t[i] = (Nt_x0[i] - sum(Nt_N[i][j] * t[j] for j in range(i + 1, k))) / Nt_N[i][i]
-        
+
         # Tính nghiệm chuẩn nhỏ nhất = x0 + N^T * t
         min_norm_x = [round(x0[i] + sum(N[j][i] * t[j] for j in range(k)), 6) for i in range(n)]
-        
-        return ["Vô số nghiệm", min_norm_x]
-    # --------------------------------------------------------
 
-    # --- GIỮ NGUYÊN PHẦN CÒN LẠI (TRƯỜNG HỢP NGHIỆM DUY NHẤT) ---
+        return ["Vô số nghiệm", min_norm_x]
+
+    # Trường hợp nghiệm duy nhất
     ket_qua = []
     for i in range(n):
         tmp = x[i]
@@ -93,4 +92,3 @@ def back_substitution(U: list, c: list):
         ket_qua.append(f"x_{i+1} = {bieu_thuc}")
 
     return ket_qua
-
