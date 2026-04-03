@@ -36,3 +36,21 @@ def inverse(A : list):
     # Trich xuat phan ma tran ben phai [I | A_inv]
     A_inv = [row[n:] for row in M]
     return A_inv
+
+# Testcase cho hàm inverse
+A = [
+    [4.0, 7.0],
+    [2.0, 6.0]
+]
+
+result = inverse(A)
+
+if isinstance(result, str):
+    print(result)
+else:
+    print("Ma trận nghịch đảo của A:")
+    for row in result:
+        # Làm tròn đến 2 chữ số thập phân để dễ nhìn
+        print([round(x, 2) for x in row])
+
+# Kiểm tra lại: A * A_inv nên xấp xỉ ma trận đơn vị I
