@@ -1,5 +1,3 @@
-from gaussian import gaussian_eliminate
-from back_substitution import back_substitution
 def rank_and_basis(A):
     nRow = len(A)
     nCol = len(A[0])
@@ -50,7 +48,13 @@ def rank_and_basis(A):
 
         for i in range(len(pivotCol)):
             pCol = pivotCol[i]
+
             val = pivotVal[i]
+
+            # Nếu là string dạng "x_1 = 1.00" thì parse lấy số
+            if isinstance(val, str):
+                val = float(val.split("=")[1])
+
             specialSol[pCol] = val
 
         nullBasis.append(specialSol)
