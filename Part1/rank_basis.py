@@ -1,3 +1,6 @@
+from gaussian import gaussian_eliminate
+from back_substitution import back_substitution
+
 def rank_and_basis(A):
     nRow = len(A)
     nCol = len(A[0])
