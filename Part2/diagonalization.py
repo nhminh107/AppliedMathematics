@@ -1,4 +1,3 @@
-# Nạp hàm từ file jacobi.py
 from Jacobi import jacobi_eigenvalue, transpose, matrix_multiply
 def diagonalize_symmetric(A):
     """
