@@ -1,22 +1,42 @@
 from Jacobi import jacobi_eigenvalue, transpose, matrix_multiply
 def diagonalize_symmetric(A):
     """
-    Chéo hóa ma trận đối xứng A.
+    Chéo hóa ma trận đối xứng A và sắp xếp trị riêng giảm dần.
     Trả về ma trận P, D, và P_inv sao cho A = P * D * P_inv.
     """
     n = len(A)
-    
-    # 1. Tìm giá trị riêng và vector riêng
-    eigenvalues, P = jacobi_eigenvalue(A)
-    
+    #Tìm trị riêng và vector riêng bằng Jacobi
+    #eigenvalues là list các trị riêng
+    eigenvalues, P_raw = jacobi_eigenvalue(A)
+
+    #Ghép trị riêng với vector riêng tương ứng để sắp xếp
+    #P_raw có các cột là vector riêng, nên ta lấy P_raw[i][j] theo cột j
+    eig_pairs = []
+    for j in range(n):
+        val = eigenvalues[j]
+        vec = [P_raw[i][j] for i in range(n)] #vector riêng tương ứng với trị riêng j
+        eig_pairs.append((val, vec))
+
+    #Sắp xếp trị riêng giảm dần
+    eig_pairs.sort(key=lambda x: x[0], reverse=True)
+
+    #Tạo lại ma trận D và P sau khi đã sắp xếp
     D = [[0.0 for _ in range(n)] for _ in range(n)]
-    for i in range(n):
-        D[i][i] = eigenvalues[i]
-        
-    # 2. Tìm P^(-1)
-    # Vì A đối xứng, P là ma trận trực giao, nên P^(-1) = P^T
+    P = [[0.0 for _ in range(n)] for _ in range(n)]
+
+    sorted_eigenvalues = []
+    for j in range(n):
+        val_j = eig_pairs[j][0]
+        vec_j = eig_pairs[j][1]
+
+        sorted_eigenvalues.append(val_j)
+        D[j][j] = val_j
+        for i in range(n):
+            P[i][j] = vec_j[i]
+
+    #Tìm P^(-1), vì A đối xứng, P là ma trận trực giao => P^(-1) = P^T
     P_inv = transpose(P)
-    
+
     return P, D, P_inv
 
 def verify_diagonalization(P, D, P_inv):
