@@ -16,11 +16,14 @@ def matrix_multiply(A, B):
                 result[i][j] += A[i][k] * B[k][j]
     return result
 
-def jacobi_eigenvalue(A, tol=1e-9, max_iter=100):
+def jacobi_eigenvalue(A, tol=1e-9, max_iter=None):
     """
     Thuật toán Jacobi tìm giá trị riêng và vector riêng cho ma trận đối xứng.
     """
     n = len(A)
+    if max_iter is None:
+        max_iter = 10 * n**2
+        
     V = [[1.0 if i == j else 0.0 for j in range(n)] for i in range(n)]
     A_copy = [[A[i][j] for j in range(n)] for i in range(n)]
 
