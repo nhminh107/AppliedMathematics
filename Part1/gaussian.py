@@ -1,5 +1,5 @@
-from helper_function import augmented_matrix, change_row, plus_another_row
-from back_substitution import back_substitution
+from Part1.helper_function import augmented_matrix, change_row, plus_another_row
+from Part1.back_substitution import back_substitution
 import copy
 
 def gaussian_eliminate(A: list, b: list):

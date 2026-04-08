@@ -1,5 +1,5 @@
 import math
-from Jacobi import transpose, matrix_multiply, jacobi_eigenvalue
+from Part2.Jacobi import transpose, matrix_multiply, jacobi_eigenvalue
 
 def svd_decompose(A):
     """Phân rã SVD cho ma trận A."""
