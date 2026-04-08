@@ -117,24 +117,25 @@ def benchmark_for_iterator_solver(LSTest: list):
     return time_record, relative_error_record
 
 def benchmark(): 
-    # 1. Khởi tạo bộ Test Case
-    sizes = [50, 100, 200, 500] 
-    LSTestCase = []
+    # 1. Thêm kích thước 1000 vào bộ test
+    sizes = [50, 100, 200, 500, 1000] 
     
     print(f"{'N':<6} | {'Method':<15} | {'Time (ms)':<12} | {'Relative Error':<15}")
     print("-" * 55)
 
     for n in sizes: 
-        # Tạo ma trận chéo trội để đảm bảo Gauss-Seidel hội tụ
-        A = [[random.uniform(1, 10) for _ in range(n)] for _ in range(n)]
-        for i in range(n):
-            row_sum = sum(abs(A[i][j]) for j in range(n) if i != j)
-            A[i][i] = row_sum + random.uniform(1, 5)
-            
-        b = [random.uniform(-100, 100) for _ in range(n)]
-        test_data = [[A, b]] # Bọc trong list để khớp với hàm benchmark của bạn
+        test_data = []
+        
+        # 2. Lặp 5 lần để tạo 5 testcase ngẫu nhiên cho mỗi kích thước n
+        for _ in range(5):
+            A = [[random.uniform(1, 10) for _ in range(n)] for _ in range(n)]
+            for i in range(n):
+                row_sum = sum(abs(A[i][j]) for j in range(n) if i != j)
+                A[i][i] = row_sum + random.uniform(1, 5)
+                
+            b = [random.uniform(-100, 100) for _ in range(n)]
+            test_data.append([A, b]) 
 
-        # 2. Chạy benchmark cho từng phương pháp
         methods = [
             ("Gaussian", benchmark_for_gaussian),
             ("SVD", benchmark_for_svd_solver),
@@ -144,8 +145,10 @@ def benchmark():
         for name, func in methods:
             try:
                 times, errors = func(test_data)
-                avg_time = times[0] * 1000 # Chuyển sang ms
-                avg_error = errors[0]
+                
+                # 3. Tính giá trị trung bình của 5 lần chạy
+                avg_time = (sum(times) / len(times)) * 1000 
+                avg_error = sum(errors) / len(errors)
                 
                 print(f"{n:<6} | {name:<15} | {avg_time:>10.2f} | {avg_error:>15.2e}")
             except Exception as e:
@@ -154,4 +157,3 @@ def benchmark():
     
     
 benchmark()
-
