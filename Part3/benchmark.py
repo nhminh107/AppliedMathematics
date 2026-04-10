@@ -5,6 +5,7 @@ from Part3.solvers import iteratorSolve
 import time 
 import math 
 import random
+import matplotlib.pyplot as plt 
 
 
 def gaussian_solve(A:list, b:list): 
@@ -117,16 +118,20 @@ def benchmark_for_iterator_solver(LSTest: list):
     return time_record, relative_error_record
 
 def benchmark(): 
-    # 1. Thêm kích thước 1000 vào bộ test
     sizes = [50, 100, 200, 500, 1000] 
+    
+    # 1. Khởi tạo dictionary để lưu thời gian
+    time_records = {
+        "Gaussian": [],
+        "SVD": [],
+        "Iterative": []
+    }
     
     print(f"{'N':<6} | {'Method':<15} | {'Time (ms)':<12} | {'Relative Error':<15}")
     print("-" * 55)
 
     for n in sizes: 
         test_data = []
-        
-        # 2. Lặp 5 lần để tạo 5 testcase ngẫu nhiên cho mỗi kích thước n
         for _ in range(5):
             A = [[random.uniform(1, 10) for _ in range(n)] for _ in range(n)]
             for i in range(n):
@@ -145,15 +150,46 @@ def benchmark():
         for name, func in methods:
             try:
                 times, errors = func(test_data)
-                
-                # 3. Tính giá trị trung bình của 5 lần chạy
                 avg_time = (sum(times) / len(times)) * 1000 
                 avg_error = sum(errors) / len(errors)
+
+                time_records[name].append(avg_time)
                 
                 print(f"{n:<6} | {name:<15} | {avg_time:>10.2f} | {avg_error:>15.2e}")
             except Exception as e:
+                time_records[name].append(None) 
                 print(f"{n:<6} | {name:<15} | {'Error':>10} | {str(e)[:15]}")
         print("-" * 55)
     
+    print("Đồ thị LOG-LOG")
+    plot_log_log(sizes, time_records)
     
+    
+def plot_log_log(sizes, time_records):
+    plt.figure(figsize=(10, 6))
+    
+    for method, times in time_records.items():
+        valid_sizes = [s for s, t in zip(sizes, times) if t is not None]
+        valid_times = [t for t in times if t is not None]
+        
+        if valid_times:
+            marker = 'o' if method == 'Gaussian' else 's' if method == 'SVD' else '^'
+            plt.plot(valid_sizes, valid_times, marker=marker, label=method)
+    
+    valid_gauss_times = [t for t in time_records['Gaussian'] if t is not None]
+    if valid_gauss_times:
+        c = valid_gauss_times[0] / (sizes[0]**3)
+        theoretical_O3 = [c * (n**3) for n in sizes]
+        plt.plot(sizes, theoretical_O3, 'k--', label='$O(n^3)$ Theoretical')
+
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel('Kích thước ma trận n (log scale)')
+    plt.ylabel('Thời gian chạy (ms) (log scale)')
+    plt.title('Log-Log Plot: Thời gian chạy vs Kích thước n')
+    plt.legend()
+    plt.grid(True, which="both", ls="--")
+    plt.show()
+
+
 benchmark()
