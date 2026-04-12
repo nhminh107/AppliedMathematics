@@ -3,6 +3,94 @@ import numpy as np
 from manim.utils.color.X11 import LIGHTBLUE
 
 DEFAULT_FONT = "Latin Modern Roman 12"
+class IntroScene(Scene):
+    def construct(self):
+        logo = ImageMobject("logo-hcmus-new.png")
+        logo.scale(0.4).to_edge(UP)
+
+        school_name = Text(
+            "Trường Đại học Khoa học Tự nhiên - ĐHQG-HCM",
+            font_size=32,
+            font=DEFAULT_FONT
+        )
+
+        class_name = Text(
+            "Lớp 24CTT3",
+            font_size=30,
+            font=DEFAULT_FONT
+        )
+
+        subject = Text(
+            "Toán Ứng Dụng & Thống Kê",
+            font_size=36,
+            color=BLUE,
+            font=DEFAULT_FONT
+        )
+
+        info_group = VGroup(
+            school_name,
+            class_name,
+            subject
+        ).arrange(DOWN, buff=0.7)
+
+        info_group.next_to(logo, DOWN)
+
+        self.play(
+            FadeIn(logo),
+            Write(info_group)
+        )
+        self.wait(2)
+
+        # ======================
+        # FRAME 2: Thành viên (FIX ALIGN)
+        # ======================
+        group_title = Text(
+            "NHÓM 2",
+            font_size=40,
+            color=YELLOW,
+            font=DEFAULT_FONT
+        ).to_edge(UP)
+        ids = [
+            "24120381",
+            "24120288",
+            "24120276",
+            "24120300",
+            "24120369"
+        ]
+
+        names = [
+            "Ngô Hoàng Minh",
+            "Nguyễn Thành Dự",
+            "Mai Thúc Hải Đăng",
+            "Đỗ Ngọc Hải",
+            "Nguyễn Xuân Lộc"
+        ]
+
+        # 👉 Tạo từng dòng (row)
+        rows = VGroup()
+        for i in range(len(ids)):
+            id_text = Text(ids[i], font_size=28, font=DEFAULT_FONT)
+            name_text = Text(names[i], font_size=28, font=DEFAULT_FONT)
+
+            row = VGroup(id_text, name_text).arrange(RIGHT, buff=1.5)
+            rows.add(row)
+
+        # 👉 Căn toàn bộ theo LEFT để thẳng hàng
+        rows.arrange(DOWN, aligned_edge=LEFT, buff=0.4)
+        rows.next_to(group_title, DOWN, buff=0.7)
+
+        self.play(
+            FadeOut(logo),
+            FadeOut(info_group),
+            Write(group_title)
+        )
+
+        # Animation từng dòng
+        self.play(
+            LaggedStart(*[FadeIn(row, shift=RIGHT) for row in rows], lag_ratio=0.2)
+        )
+
+        self.wait(2)
 class Scene1(Scene):
 
     """IN RA LỜI CHÀO"""
