@@ -3,70 +3,91 @@ def back_substitution(U: list, c: list):
 
     m = len(U)
     if m == 0: return []
-    n = len(U[0]) # Kích thước m x n
+    n = len(U[0])
 
-    # x[i] lưu biểu thức của x_i
-    x = [[0.0] * (n + 1) for _ in range(n)]
+    # Khởi tạo dictionary x[i] = {0: hằng_số, k: hệ_số_của_x_k}
+    x = [{} for _ in range(n)]
 
-    # Giả định ban đầu mọi biến đều là "ẩn tự do" (ví dụ: x2 = 1*x2)
+    # Mặc định mọi ẩn ban đầu đều là ẩn tự do.
     for i in range(n):
         x[i][i + 1] = 1.0
 
-    # Chạy ngược từ dòng cuối lên trên
     for i in range(m - 1, -1, -1):
-        # Tìm phần tử (pivot) của dòng i
+        
+        # Tìm pivot khác 0 đầu tiên trên dòng i
         p = -1
         for j in range(n):
             if abs(U[i][j]) > EPS:
                 p = j
                 break
 
-        # Xử lý trường hợp dòng toàn số 0 (không có pivot)
-        if p == -1:
-            if abs(c[i]) > EPS:
-                return "Hệ vô nghiệm"
-            continue
+        # Kiểm tra hpt
+        if p == -1: # Nếu cả dòng toàn số 0
+            if abs(c[i]) > EPS: 
+                raise ValueError("Hệ vô nghiệm") 
+            continue 
 
-        if abs(U[i][p]) < EPS:
-            continue
+        # Tính x[p]
+        inv_pivot = 1.0 / U[i][p] 
+        
+        # Biểu thức mới của x[p], bắt đầu bằng phần hằng số: c_i / U_ip
+        new_xp_expr = {0: c[i] * inv_pivot}
 
-        # Rút biến cơ sở x_p theo các biến đằng sau nó
-        x[p] = [0.0] * (n + 1)
-        x[p][0] = c[i] / U[i][p]
-
-        # Thế biểu thức của các x_j vào
+        # Thế các ẩn đã biết ở dưới lên
         for j in range(p + 1, n):
-            if abs(U[i][j]) > EPS:
-                factor = -U[i][j] / U[i][p]
-                # Cộng dồn hệ số: x_p = x_p + factor * x_j
-                for k in range(n + 1):
-                    x[p][k] += factor * x[j][k]
+            val_ij = U[i][j]
+            if abs(val_ij) > EPS:
+                
+                factor = -val_ij * inv_pivot
+                
+                for var_idx, weight in x[j].items():
+                    current_weight = new_xp_expr.get(var_idx, 0.0)
+                    updated_weight = current_weight + (factor * weight)
+                    
+                    if abs(updated_weight) > EPS:
+                        new_xp_expr[var_idx] = updated_weight
+                    elif var_idx in new_xp_expr:
+                        del new_xp_expr[var_idx]
 
-    # Chuyển đổi mảng hệ số thành chuỗi công thức tổng quát
+        x[p] = new_xp_expr
+
+    #Khởi tạo nghiệm
     ket_qua = []
     for i in range(n):
-        tmp = x[i]
-
-        if abs(tmp[i + 1] - 1.0) < EPS and all(abs(tmp[k]) < EPS for k in range(n + 1) if k != i + 1):
+        expr = x[i]
+        
+        # Xét xem x_i có phải ẩn tự do không
+        is_free = (len(expr) == 1 and (i + 1) in expr and abs(expr[i + 1] - 1.0) < EPS)
+        if is_free:
             ket_qua.append(f"x_{i+1} (ẩn tự do)")
             continue
 
         terms = []
-        if abs(tmp[0]) > EPS:
-            terms.append(f"{tmp[0]:.2f}")
+        # Xử lý hằng số
+        if abs(expr.get(0, 0.0)) > EPS:
+            terms.append(f"{expr[0]:.2f}")
 
-        for k in range(1, n + 1):
-            if abs(tmp[k]) > EPS:
-                sign = "+" if tmp[k] > 0 else "-"
-                val = f"{abs(tmp[k]):.2f}" if abs(abs(tmp[k]) - 1.0) > EPS else ""
-                terms.append(f"{sign} {val}x{k}")
+        # Sort keys để x1, x2, x3 in ra đúng thứ tự
+        for k in sorted(expr.keys()):
+            if k == 0: continue
+            
+            val = expr[k]
+            sign = "+" if val > 0 else "-"
+            abs_val = abs(val)
+            
+            # Nếu hệ số là 1 hoặc -1 thì ẩn đi
+            formatted_val = f"{abs_val:.2f}" if abs(abs_val - 1.0) > EPS else ""
+            
+            if not terms: # Nếu đây là phần tử đầu tiên của chuỗi
+                prefix = "-" if sign == "-" else ""
+                terms.append(f"{prefix}{formatted_val}x_{k}")
+            else:
+                terms.append(f"{sign} {formatted_val}x_{k}")
 
         bieu_thuc = " ".join(terms).strip()
-        if bieu_thuc.startswith("+ "):
-            bieu_thuc = bieu_thuc[2:]
-        elif not bieu_thuc:
+        if not bieu_thuc:
             bieu_thuc = "0"
-
+            
         ket_qua.append(f"x_{i+1} = {bieu_thuc}")
 
     return ket_qua
