@@ -4,53 +4,49 @@ import copy
 
 def gaussian_eliminate(A: list, b: list):
     """Hàm chính: Giải hệ phương trình Ax = b"""
+    
+    EPS = 1e-10
+    n = len(A)
+    if n == 0: return [], [], 0
+    m = len(A[0])
+    m_total = m + 1
 
-    augMatrix = augmented_matrix(A, b)
-
-    ref_matrix = copy.deepcopy(augMatrix)
-    n = len(ref_matrix)
-    m_total = len(ref_matrix[0])
+    # ta dùng list comprehension ghép A và b trực tiếp.
+    ref_matrix = [A[i] + [b[i]] for i in range(n)]
 
     row, col, swap_count = 0, 0, 0
 
-    while row < n and col < m_total:
-        maxVal = -1
+    while row < n and col < m: 
+        maxVal = -1.0
         max_row = -1
-
         for i in range(row, n):
-            if abs(ref_matrix[i][col]) > maxVal:
-                maxVal = abs(ref_matrix[i][col])
+            val = abs(ref_matrix[i][col])
+            if val > maxVal:
+                maxVal = val
                 max_row = i
 
-        if abs(ref_matrix[max_row][col]) < 1e-10:
+        # Nếu phần tử lớn nhất vẫn < EPS, coi như cột đó toàn số 0
+        if maxVal < EPS:
             col += 1
             continue
 
         if max_row != row:
-            change_row(ref_matrix, row, max_row)
+            ref_matrix[row], ref_matrix[max_row] = ref_matrix[max_row], ref_matrix[row]
             swap_count += 1
 
+        pivot = ref_matrix[row][col]
         for i in range(row + 1, n):
-            c_factor = -ref_matrix[i][col] / ref_matrix[row][col]
-            plus_another_row(ref_matrix, i, row, c_factor)
+            if abs(ref_matrix[i][col]) > EPS:
+                c_factor = ref_matrix[i][col] / pivot
+                
+                for j in range(col, m_total):
+                    ref_matrix[i][j] -= c_factor * ref_matrix[row][j]
 
         row += 1
         col += 1
 
-    n, m = len(A), len(A[0])
-
-    for i in range(n):
-        is_zero_row_A = True
-        for j in range(m):
-            if abs(ref_matrix[i][j]) > 1e-10:
-                is_zero_row_A = False
-                break
-
-        if is_zero_row_A and abs(ref_matrix[i][m]) > 1e-10:
-            return ref_matrix, "Vô nghiệm", swap_count
-
-    U = [row[:m] for row in ref_matrix]
-    c_vec = [row[m] for row in ref_matrix]
+    U = [r[:m] for r in ref_matrix]
+    c_vec = [r[m] for r in ref_matrix]
 
     result = back_substitution(U, c_vec)
 
