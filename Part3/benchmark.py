@@ -191,5 +191,66 @@ def plot_log_log(sizes, time_records):
     plt.grid(True, which="both", ls="--")
     plt.show()
 
+def generate_hilbert_matrix(n):
+    """Tạo ma trận Hilbert (Ill-conditioned)"""
+    return [[1.0 / (i + j + 1) for j in range(n)] for i in range(n)]
 
+def generate_spd_matrix(n):
+    """Tạo ma trận Random SPD (Well-conditioned)"""
+    A = [[random.uniform(-1, 1) for _ in range(n)] for _ in range(n)]
+    A_T = transpose(A)
+    # Nhân A * A^T để ma trận mang tính đối xứng dương (SPD)
+    A_spd = [[sum(A[i][k] * A_T[k][j] for k in range(n)) for j in range(n)] for i in range(n)]
+    
+    # Cộng thêm n vào đường chéo để đảm bảo chéo trội / SPD mạnh
+    for i in range(n):
+        A_spd[i][i] += n 
+    return A_spd
+
+def analyze_stability():
+    sizes = [10, 20, 50] # Test ở các kích thước nhỏ và vừa vì Hilbert sai số rất nhanh
+    print("\n" + "="*60)
+    print(" BẮT ĐẦU PHÂN TÍCH TÍNH ỔN ĐỊNH (HILBERT vs SPD)")
+    print("="*60)
+    
+    for n in sizes:
+        print(f"\n--- Kích thước N = {n} ---")
+        
+        # Giả sử vector nghiệm đúng x = [1, 1, ..., 1]
+        x_true = [1.0] * n
+        
+        # 1. Tạo Testcase với ma trận Hilbert
+        H = generate_hilbert_matrix(n)
+        b_H = [sum(H[i][j] * x_true[j] for j in range(n)) for i in range(n)]
+        
+        # 2. Tạo Testcase với ma trận SPD
+        S = generate_spd_matrix(n)
+        b_S = [sum(S[i][j] * x_true[j] for j in range(n)) for i in range(n)]
+        
+        methods = [
+            ("Gaussian", gaussian_solve),
+            ("SVD", svd_solve)
+        ]
+        
+        print(f"{'Phương pháp':<15} | {'Sai số Hilbert (Ill)':<20} | {'Sai số SPD (Well)':<20}")
+        print("-" * 60)
+        
+        for name, solver in methods:
+            # Test ma trận Hilbert
+            try:
+                x_H = solver(H, b_H)
+                err_H = relative_error(H, b_H, x_H)
+            except:
+                err_H = float('inf')
+                
+            # Test ma trận SPD
+            try:
+                x_S = solver(S, b_S)
+                err_S = relative_error(S, b_S, x_S)
+            except:
+                err_S = float('inf')
+                
+            print(f"{name:<15} | {err_H:<20.2e} | {err_S:<20.2e}")
+
+analyze_stability()
 benchmark()
