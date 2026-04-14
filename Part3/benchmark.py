@@ -7,7 +7,7 @@ import math
 import random
 import matplotlib.pyplot as plt 
 
-
+#python -m Part3.benchmark
 def gaussian_solve(A:list, b:list): 
     x = gaussian_eliminate(A, b)[1] 
     return [float(s.split('=')[1]) for s in x]
