@@ -11,6 +11,7 @@
 | Nguyễn Xuân Lộc    | 24120369 |
 
 ## 📂 Cấu trúc thư mục
+```
 AppliedMathematics/
 │
 ├── Part1/
@@ -36,7 +37,7 @@ AppliedMathematics/
 │ ├── analysis.py
 ├── main.py
 └── README.md
-
+```
 
 ## 🚀 Cách chạy chương trình
 ### 1. Clone repository
