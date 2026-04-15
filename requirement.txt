@@ -1,0 +1,8 @@
+# Thư viện tính toán ma trận và mảng (Bản ổn định nhất hiện nay)
+numpy==1.26.4
+
+# Thư viện vẽ đồ thị 2D
+matplotlib>=3.8.0
+
+# Thư viện hoạt họa toán học (Community Edition)
+manim
