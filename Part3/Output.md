@@ -44,3 +44,4 @@ N      | Method          | Time (ms)    | Relative Error
 -------------------------------------------------------
 
 ``` 
+![Log - Log Plot](./plot.png)
