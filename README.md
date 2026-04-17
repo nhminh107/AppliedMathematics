@@ -1,6 +1,14 @@
-# Applied Mathematics
+# Applied Mathematics And Statistics
+![Log - Log Plot](Part2/logo-hcmus-new.png)
 
 ****
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-blue.svg">
+  <img src="https://img.shields.io/badge/Manim-Animation-green.svg">
+  <img src="https://img.shields.io/badge/Status-Completed-success.svg">
+  <img src="https://img.shields.io/badge/License-MIT-yellow.svg">
+</p>
+
 **GROUP 01 - 24CTT3** 
 | Họ tên             | MSSV     |
 |--------------------|----------|
@@ -53,3 +61,10 @@ python -m Part<i>.<file_name>
 ```
 Trong đó i là 1/2/3; file_name là tên file muốn chạy
 
+## 🧪 Các file Test
+Các đoạn test nhóm em để vào trong các file **Notebook**.
+
+Đối với Part3, vì file code chạy rất lâu ở n = 1000 nên em để ảnh Plot LOG - LOG cũng như link chạy test dưới đây : 
+https://www.kaggle.com/code/nhminh107/run-benchmark
+
+![Log - Log Plot](Part3/plot.png)
