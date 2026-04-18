@@ -103,12 +103,41 @@ def verify_diagonalization(P, D, P_inv):
 
 if __name__ == "__main__":
     DiagonalTestCase = [
+        # 1. Symmetric dương xác định
         [[4, 1], [1, 3]],
-        [[2, -1, 0], [-1, 2, -1], [0, -1, 2]],
-        [[5, 0], [0, -3]],
-        [[0, -1], [1, 0]]
-    ]
 
+        # 2. Tridiagonal (SPD)
+        [[2, -1, 0], [-1, 2, -1], [0, -1, 2]],
+
+        # 3. Ma trận chéo (có số âm)
+        [[5, 0], [0, -3]],
+
+        # 4. Ma trận quay (không đối xứng)
+        [[0, -1], [1, 0]],
+
+        # 5. Ma trận đơn vị
+        [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+
+        # 6. Ma trận toàn số 0
+        [[0, 0], [0, 0]],
+
+        # 7. Ma trận đối xứng nhưng không xác định dương
+        [[0, 2], [2, 0]],
+
+        # 8. Ma trận 3x3 bất kỳ
+        [[3, 2, 1], [2, 3, 2], [1, 2, 3]],
+
+        # 9. Ma trận gần suy biến (det gần 0)
+        [[1, 1], [1, 1.00001]],
+
+        # 10. Ma trận 4x4 phức tạp hơn
+        [
+            [4, 2, 0, 0],
+            [2, 4, 2, 0],
+            [0, 2, 4, 2],
+            [0, 0, 2, 4]
+        ]
+    ]
     def format_val(x):
         return round(x, 4)
 
