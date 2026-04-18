@@ -62,7 +62,7 @@ python -m Part<i>.<file_name>
 Trong đó i là 1/2/3; file_name là tên file muốn chạy
 
 ## 🧪 Các file Test
-Các đoạn test nhóm em để vào trong các file **Notebook**.
+Các đoạn test nhóm em để vào trong các file **Notebook**. Riêng với Diagonalization, vì nó gọi tới nhiều hàm ở Part1 và các file khác nên nhóm em bỏ bộ test vào trong file
 
 Đối với Part3, vì file code chạy rất lâu ở n = 1000 nên em để ảnh Plot LOG - LOG cũng như link chạy test dưới đây : 
 https://www.kaggle.com/code/nhminh107/run-benchmark
